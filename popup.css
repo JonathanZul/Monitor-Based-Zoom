@@ -1,25 +1,81 @@
+/* popup.css */
 body {
-    font-family: Arial, sans-serif;
-    margin: 10px;
-  }
-  
-  h1 {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-  
-  #profiles-container {
-    margin-bottom: 10px;
-  }
-  
-  .profile {
-    border: 1px solid #ccc;
-    padding: 8px;
-    margin-bottom: 8px;
-  }
-  
-  .profile h2 {
-    font-size: 16px;
-    margin: 0 0 5px;
-  }
-  
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f5f5;
+  margin: 0;
+  padding: 10px;
+  color: #333;
+}
+
+.container {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+h1 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.profile {
+  background: #fff;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.profile h2 {
+  font-size: 18px;
+  margin: 0 0 10px;
+}
+
+.profile label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.profile input[type="number"],
+.profile input[type="text"],
+.profile input[type="range"] {
+  width: 100%;
+  padding: 5px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.zoom-group {
+  display: flex;
+  align-items: center;
+}
+
+.zoom-group input[type="range"] {
+  flex: 1;
+}
+
+.zoom-group input[type="number"] {
+  width: 60px;
+  margin-left: 10px;
+}
+
+.buttons {
+  text-align: center;
+}
+
+button {
+  background: #0078d7;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 5px;
+  font-size: 14px;
+}
+
+button:hover {
+  background: #005fa3;
+}

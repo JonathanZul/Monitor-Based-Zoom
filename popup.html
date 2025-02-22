@@ -3,15 +3,19 @@
 <head>
   <meta charset="utf-8">
   <title>Dynamic Monitor Zoom</title>
-  <link rel="stylesheet" type="text/css" href="popup.css">
+  <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <h1>Dynamic Monitor Zoom</h1>
-  <div id="profiles-container">
-    <!-- Monitor profiles will be added here dynamically -->
+  <div class="container">
+    <h1>Dynamic Monitor Zoom</h1>
+    <div id="profiles-container">
+      <!-- Monitor profiles will be added here dynamically -->
+    </div>
+    <div class="buttons">
+      <button id="add-profile">Add Monitor Profile</button>
+      <button id="apply-changes" style="display: none;">Apply Changes</button>
+    </div>
   </div>
-  <button id="add-profile">Add Monitor Profile</button>
-  <button id="apply-changes" style="display: none;">Apply Changes</button>
   <script src="popup.js"></script>
 </body>
 </html>

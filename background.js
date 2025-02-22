@@ -1,43 +1,79 @@
 // background.js
 
-// Function to compute the appropriate zoom for a given window
+// Function to compute the appropriate zoom for a given window using a two-step matching.
 async function computeZoomForWindow(window) {
-    // Define the window's rectangle.
-    const winRect = {
-      left: window.left,
-      top: window.top,
-      right: window.left + window.width,
-      bottom: window.top + window.height
-    };
-  
-    // Retrieve stored monitor profiles.
-    const data = await browser.storage.local.get("profiles");
-    const profiles = data.profiles || [];
-    let maxArea = 0;
-    let selectedZoom = 1.0; // Default zoom
-  
-    profiles.forEach(profile => {
-      // Define the monitor's rectangle.
-      const profileRect = {
-        left: profile.left,
-        top: profile.top,
-        right: profile.left + profile.width,
-        bottom: profile.top + profile.height
-      };
-  
-      // Compute overlapping area.
-      const xOverlap = Math.max(0, Math.min(winRect.right, profileRect.right) - Math.max(winRect.left, profileRect.left));
-      const yOverlap = Math.max(0, Math.min(winRect.bottom, profileRect.bottom) - Math.max(winRect.top, profileRect.top));
-      const area = xOverlap * yOverlap;
-  
-      if (area > maxArea) {
-        maxArea = area;
-        selectedZoom = profile.zoom;
-      }
-    });
-  
-    return selectedZoom;
+  // Define the window's rectangle.
+  const winRect = {
+    left: window.left,
+    top: window.top,
+    right: window.left + window.width,
+    bottom: window.top + window.height,
+  };
+
+  // Retrieve stored monitor profiles.
+  const data = await browser.storage.local.get("profiles");
+  const profiles = data.profiles || [];
+  if (profiles.length === 0) {
+    return 1.0; // Default zoom if no profiles exist.
   }
+
+  // First, try to match by intersection area.
+  let bestProfile = null;
+  let maxArea = 0;
+
+  profiles.forEach(profile => {
+    // Define the profile (monitor) rectangle.
+    const profileRect = {
+      left: profile.left,
+      top: profile.top,
+      right: profile.left + profile.width,
+      bottom: profile.top + profile.height,
+    };
+
+    // Compute overlapping area.
+    const xOverlap = Math.max(0, Math.min(winRect.right, profileRect.right) - Math.max(winRect.left, profileRect.left));
+    const yOverlap = Math.max(0, Math.min(winRect.bottom, profileRect.bottom) - Math.max(winRect.top, profileRect.top));
+    const area = xOverlap * yOverlap;
+
+    if (area > maxArea) {
+      maxArea = area;
+      bestProfile = profile;
+    }
+  });
+
+  // If an intersection exists, use that profile's zoom.
+  if (maxArea > 0) {
+    return bestProfile.zoom;
+  }
+
+  // Fallback: No intersection, so compute distance between centers.
+  const winCenter = {
+    x: window.left + window.width / 2,
+    y: window.top + window.height / 2,
+  };
+
+  let bestDistance = Infinity;
+  bestProfile = null;
+
+  profiles.forEach(profile => {
+    const profileCenter = {
+      x: profile.left + profile.width / 2,
+      y: profile.top + profile.height / 2,
+    };
+
+    const dx = winCenter.x - profileCenter.x;
+    const dy = winCenter.y - profileCenter.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestProfile = profile;
+    }
+  });
+
+  return bestProfile ? bestProfile.zoom : 1.0;
+}
+
   
   // Define updateWindowZoom to update a single window's zoom level.
   async function updateWindowZoom(window) {
