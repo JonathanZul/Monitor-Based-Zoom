@@ -1,0 +1,25 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 10px;
+  }
+  
+  h1 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  #profiles-container {
+    margin-bottom: 10px;
+  }
+  
+  .profile {
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .profile h2 {
+    font-size: 16px;
+    margin: 0 0 5px;
+  }
+  

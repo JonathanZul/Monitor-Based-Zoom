@@ -1,32 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Monitor Zoom</title>
-    <script src="popup.js" defer></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 15px;
-            width: 250px;
-            text-align: center;
-        }
-        input[type="range"] {
-            width: 100%;
-        }
-        .zoom-value {
-            font-size: 16px;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="utf-8">
+  <title>Dynamic Monitor Zoom</title>
+  <link rel="stylesheet" type="text/css" href="popup.css">
 </head>
 <body>
-    <h2>Monitor Zoom</h2>
-    <p id="currentResolution"></p>
-    
-    <label for="zoomSlider">Zoom:</label>
-    <input type="range" id="zoomSlider" min="0.5" max="2" step="0.01">
-    <p class="zoom-value"><span id="zoomValue">100</span>%</p>
-
-    <button id="save">Save</button>
+  <h1>Dynamic Monitor Zoom</h1>
+  <div id="profiles-container">
+    <!-- Monitor profiles will be added here dynamically -->
+  </div>
+  <button id="add-profile">Add Monitor Profile</button>
+  <button id="apply-changes" style="display: none;">Apply Changes</button>
+  <script src="popup.js"></script>
 </body>
 </html>

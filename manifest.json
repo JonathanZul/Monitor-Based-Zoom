@@ -1,10 +1,13 @@
 {
     "manifest_version": 2,
-    "name": "Monitor-Based Zoom",
-    "version": "1.2",
-    "description": "Automatically adjusts page zoom based on monitor resolution.",
-    "permissions": ["tabs", "storage"],
-    "host_permissions": ["<all_urls>"],
+    "name": "Dynamic Monitor Zoom",
+    "version": "1.0",
+    "description": "Adjusts zoom levels based on which monitor a window is on.",
+    "permissions": [
+      "tabs",
+      "windows",
+      "storage"
+    ],
     "background": {
       "scripts": ["background.js"],
       "persistent": true
@@ -14,10 +17,6 @@
       "default_icon": {
         "32": "icon.png"
       }
-    },
-    "options_ui": {
-      "page": "options.html",
-      "open_in_tab": true
     }
   }
   
