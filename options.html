@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zoom Settings</title>
+    <script src="options.js" defer></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 400px;
+        }
+        label, select, input {
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Set Zoom Level per Monitor</h2>
+    
+    <label for="resolutionList">Select Resolution:</label>
+    <select id="resolutionList"></select>
+
+    <label for="zoom">Zoom Level:</label>
+    <input type="number" id="zoom" step="0.1" min="0.5" max="3" value="1">
+    
+    <button id="save">Save</button>
+</body>
+</html>
