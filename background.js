@@ -1,29 +1,48 @@
 // background.js
 
-// Helper function to update zoom based on a window's center
-async function updateWindowZoom(window) {
-    const centerX = window.left + window.width / 2;
-    const centerY = window.top + window.height / 2;
+// Function to compute the appropriate zoom for a given window
+async function computeZoomForWindow(window) {
+    // Define the window's rectangle.
+    const winRect = {
+      left: window.left,
+      top: window.top,
+      right: window.left + window.width,
+      bottom: window.top + window.height
+    };
   
-    // Retrieve stored monitor profiles
+    // Retrieve stored monitor profiles.
     const data = await browser.storage.local.get("profiles");
     const profiles = data.profiles || [];
-    let appliedProfile = null;
+    let maxArea = 0;
+    let selectedZoom = 1.0; // Default zoom
   
-    for (const profile of profiles) {
-      if (
-        centerX >= profile.left &&
-        centerX <= profile.left + profile.width &&
-        centerY >= profile.top &&
-        centerY <= profile.top + profile.height
-      ) {
-        appliedProfile = profile;
-        break;
+    profiles.forEach(profile => {
+      // Define the monitor's rectangle.
+      const profileRect = {
+        left: profile.left,
+        top: profile.top,
+        right: profile.left + profile.width,
+        bottom: profile.top + profile.height
+      };
+  
+      // Compute overlapping area.
+      const xOverlap = Math.max(0, Math.min(winRect.right, profileRect.right) - Math.max(winRect.left, profileRect.left));
+      const yOverlap = Math.max(0, Math.min(winRect.bottom, profileRect.bottom) - Math.max(winRect.top, profileRect.top));
+      const area = xOverlap * yOverlap;
+  
+      if (area > maxArea) {
+        maxArea = area;
+        selectedZoom = profile.zoom;
       }
-    }
+    });
   
-    const zoomLevel = appliedProfile ? appliedProfile.zoom : 1.0;
-    console.log(`Updating zoom for window ${window.id}: center=(${centerX}, ${centerY}), zoom=${zoomLevel}`);
+    return selectedZoom;
+  }
+  
+  // Define updateWindowZoom to update a single window's zoom level.
+  async function updateWindowZoom(window) {
+    const zoomLevel = await computeZoomForWindow(window);
+    console.log(`Updating zoom for window ${window.id}: zoom=${zoomLevel}`);
   
     try {
       const tabs = await browser.tabs.query({ windowId: window.id });
@@ -31,7 +50,7 @@ async function updateWindowZoom(window) {
         try {
           await browser.tabs.setZoom(tab.id, zoomLevel);
         } catch (err) {
-          console.error("Failed to set zoom for tab", tab.id, err);
+          console.error(`Failed to set zoom for tab ${tab.id}`, err);
         }
       }
     } catch (err) {
@@ -39,7 +58,24 @@ async function updateWindowZoom(window) {
     }
   }
   
-  // Use onBoundsChanged if available; otherwise, fallback to polling.
+  // Function to update all windows by iterating over them.
+  async function updateAllWindows() {
+    try {
+      const windows = await browser.windows.getAll();
+      for (const win of windows) {
+        await updateWindowZoom(win);
+      }
+      console.log("All windows updated");
+    } catch (err) {
+      console.error("Error updating all windows:", err);
+    }
+  }
+  
+  // Expose updateAllWindows so the popup can call it.
+  window.updateAllWindows = updateAllWindows;
+  
+  // Existing event listeners...
+  
   if (browser.windows.onBoundsChanged) {
     browser.windows.onBoundsChanged.addListener((win) => {
       browser.windows.get(win.id).then((window) => {
@@ -67,7 +103,6 @@ async function updateWindowZoom(window) {
     }, 1000);
   }
   
-  // Also update when window focus changes.
   browser.windows.onFocusChanged.addListener((windowId) => {
     if (windowId !== browser.windows.WINDOW_ID_NONE) {
       browser.windows.get(windowId).then((window) => {
@@ -76,7 +111,7 @@ async function updateWindowZoom(window) {
     }
   });
   
-  // Listen for messages (e.g., from the popup when settings are applied)
+  // Listener for messages (e.g., from the popup when settings are applied)
   browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "updateZoom" && message.windowId) {
       browser.windows.get(message.windowId)
@@ -88,7 +123,7 @@ async function updateWindowZoom(window) {
           console.error("Error updating zoom on message", err);
           sendResponse({ status: "error", error: err });
         });
-      return true;
+      return true; // indicates async response
     }
   });
   

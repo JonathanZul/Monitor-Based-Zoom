@@ -130,12 +130,16 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   
   function notifyZoomUpdate() {
-    browser.windows.getCurrent().then((win) => {
-      browser.runtime.sendMessage({ action: "updateZoom", windowId: win.id })
-        .catch((error) => {
-          console.error("notifyZoomUpdate error:", error);
-        });
+    browser.runtime.getBackgroundPage().then((bgPage) => {
+      if (bgPage && typeof bgPage.updateAllWindows === "function") {
+        bgPage.updateAllWindows();
+      } else {
+        console.error("Background page or updateAllWindows not available");
+      }
+    }).catch((error) => {
+      console.error("notifyZoomUpdate error:", error);
     });
   }
+  
   
   
