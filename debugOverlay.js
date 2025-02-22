@@ -1,4 +1,12 @@
 // debugOverlay.js
+// Write the following lines in manifest.json:
+    // "content_scripts": [
+    //   {
+    //     "matches": ["<all_urls>"],
+    //     "js": ["debugOverlay.js"],
+    //     "run_at": "document_end"
+    //   }
+    // ]
 
 // Log immediately to verify the content script is injected.
 console.log("debugOverlay.js loaded");

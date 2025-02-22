@@ -17,13 +17,6 @@
       "default_icon": {
         "32": "icon.png"
       }
-    },
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["debugOverlay.js"],
-        "run_at": "document_end"
-      }
-    ]
+    }
   }
   

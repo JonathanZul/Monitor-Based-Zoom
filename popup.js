@@ -69,15 +69,20 @@ function createProfileElement(profile) {
         markModified();
       });
     }
+    // For the numeric zoom input:
     if (input.classList.contains("profile-zoom-input")) {
-      input.addEventListener("input", () => {
+      // Use 'change' instead of 'input' so partial typing isn't clamped immediately.
+      input.addEventListener("change", () => {
         let value = parseInt(input.value, 10);
         if (isNaN(value)) {
-          value = 100;
+          value = 100; // default if invalid
         }
-        // Ensure value is within bounds.
-        if (value < 50) value = 50;
-        if (value > 200) value = 200;
+        if (value < 50) {
+          value = 50;
+        }
+        if (value > 200) {
+          value = 200;
+        }
         input.value = value;
         profileDiv.querySelector(".profile-zoom-range").value = value;
         markModified();
